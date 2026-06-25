@@ -491,21 +491,28 @@
         // ============================================================
         //  3. 搜索逻辑
         // ============================================================
-        function performSearch() {
-            const keyword = searchInput.value.trim().toLowerCase();
+ function performSearch() {
+    const keyword = searchInput.value.trim().toLowerCase();
 
-            if (keyword === '') {
-                resultsArea.classList.remove('active');
-                return;
-            }
+    // 如果输入为空，隐藏结果
+    if (keyword === '') {
+        resultsArea.classList.remove('active');
+        return;
+    }
 
-            const matched = TOOLS.filter(tool =>
-                tool.title.toLowerCase().includes(keyword) ||
-                tool.desc.toLowerCase().includes(keyword)
-            );
+    // 如果输入 * ，列出所有工具
+    if (keyword === '*' || keyword === '＊') {
+        renderResults(TOOLS, '全部工具');
+        return;
+    }
 
-            renderResults(matched, keyword);
-        }
+    const matched = TOOLS.filter(tool =>
+        tool.title.toLowerCase().includes(keyword) ||
+        tool.desc.toLowerCase().includes(keyword)
+    );
+
+    renderResults(matched, keyword);
+}
 
         // ============================================================
         //  4. 渲染结果卡片
