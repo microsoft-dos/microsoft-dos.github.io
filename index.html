@@ -544,7 +544,7 @@
     </style>
 </head>
 <body>
-
+ <canvas id="starfield"></canvas>
     <div class="main-wrapper">
         <!-- ===== 主卡片 ===== -->
         <div class="card">
@@ -708,6 +708,45 @@
                 performSearch();
             }
         });
+
+        // ============================================================
+//  动态星空背景
+// ============================================================
+const canvas = document.getElementById('starfield');
+const ctx2 = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// 星星数组
+const stars = [];
+const NUM_STARS = 120;
+for (let i = 0; i < NUM_STARS; i++) {
+    stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.8 + 0.5,
+        speed: 0.005 + Math.random() * 0.02,
+        phase: Math.random() * Math.PI * 2,
+    });
+}
+
+function drawStars(time) {
+    ctx2.clearRect(0, 0, canvas.width, canvas.height);
+    for (const star of stars) {
+        const brightness = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(time * star.speed + star.phase));
+        ctx2.beginPath();
+        ctx2.arc(star.x, star.y, star.radius, 0, 2 * Math.PI);
+        ctx2.fillStyle = `rgba(255, 255, 255, ${brightness * 0.6})`;
+        ctx2.fill();
+    }
+    requestAnimationFrame(drawStars);
+}
+drawStars(0);
     </script>
 
 </body>
