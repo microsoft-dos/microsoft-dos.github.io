@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>Microsoft-DOS 的附件仓库</title>
     <style>
         /* ===== 全局样式 ===== */
@@ -60,23 +59,73 @@
             width: 100%;
         }
 
-        /* 主卡片 */
+        /* ===== 主卡片 — 液态玻璃效果 ===== */
         .card {
+            position: relative;
+            overflow: hidden;
             width: 100%;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(18px) saturate(180%);
-            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             border-radius: 56px;
             padding: 48px 40px 40px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
             transition: transform 0.25s ease, box-shadow 0.3s ease;
             margin-bottom: 30px;
         }
 
+        /* 液态玻璃的光泽层 */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                ellipse at 30% 20%,
+                rgba(255, 255, 255, 0.08) 0%,
+                transparent 60%
+            );
+            pointer-events: none;
+            transition: transform 0.4s ease;
+        }
+
+        /* 主卡片的第二个光泽层（底部反光） */
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(
+                to top,
+                rgba(255, 255, 255, 0.03) 0%,
+                transparent 100%
+            );
+            pointer-events: none;
+            border-radius: 0 0 56px 56px;
+        }
+
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            box-shadow: 
+                0 40px 100px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .card:hover::before {
+            transform: translate(5%, 3%);
+        }
+
+        /* 确保所有子元素在光泽层之上 */
+        .card > * {
+            position: relative;
+            z-index: 1;
         }
 
         /* 标题 */
@@ -164,7 +213,7 @@
             box-shadow: 0 0 20px rgba(100, 160, 255, 0.15);
         }
 
-        /* B站链接 */
+        /* B站链接 — 液态玻璃微效果 */
         .bilibili-link {
             text-align: center;
             margin-bottom: 20px;
@@ -178,6 +227,24 @@
             margin-left: auto;
             margin-right: auto;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bilibili-link::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                ellipse at 40% 30%,
+                rgba(255, 255, 255, 0.04) 0%,
+                transparent 60%
+            );
+            pointer-events: none;
+            transition: transform 0.4s ease;
         }
 
         .bilibili-link:hover {
@@ -185,6 +252,10 @@
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.12);
             box-shadow: 0 12px 28px rgba(0, 20, 40, 0.3);
+        }
+
+        .bilibili-link:hover::before {
+            transform: translate(3%, 2%);
         }
 
         .bilibili-link a {
@@ -197,6 +268,8 @@
             align-items: center;
             gap: 8px;
             transition: color 0.2s;
+            position: relative;
+            z-index: 1;
         }
 
         .bilibili-link a:hover {
@@ -210,7 +283,7 @@
             opacity: 0.7;
         }
 
-        /* 游戏入口 */
+        /* 游戏入口 — 液态玻璃 */
         .game-entry {
             text-align: center;
             margin-top: 8px;
@@ -220,10 +293,10 @@
             display: inline-flex;
             align-items: center;
             gap: 14px;
-            background: rgba(255, 215, 100, 0.06);
+            background: rgba(255, 215, 100, 0.04);
             padding: 18px 48px;
             border-radius: 80px;
-            border: 1px solid rgba(255, 215, 100, 0.12);
+            border: 1px solid rgba(255, 215, 100, 0.08);
             backdrop-filter: blur(8px);
             color: #ffe8b0;
             font-size: 1.4rem;
@@ -234,6 +307,24 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
             text-decoration: none;
             transform: translateY(0);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                ellipse at 30% 20%,
+                rgba(255, 215, 100, 0.08) 0%,
+                transparent 60%
+            );
+            pointer-events: none;
+            transition: transform 0.4s ease;
         }
 
         .game-btn:hover {
@@ -244,6 +335,10 @@
             color: #fff5d0;
         }
 
+        .game-btn:hover::before {
+            transform: translate(5%, 3%);
+        }
+
         .game-btn:active {
             transform: translateY(0px) scale(0.98);
         }
@@ -251,6 +346,8 @@
         .game-btn span {
             font-size: 1.8rem;
             line-height: 1;
+            position: relative;
+            z-index: 1;
         }
 
         /* ===== 搜索结果区域 ===== */
@@ -290,14 +387,19 @@
             color: #f0f4ff;
         }
 
-        /* ===== 工具卡片（磁吸效果） ===== */
+        /* ===== 工具卡片 — 液态玻璃效果 ===== */
         .tool-card {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
             border-radius: 24px;
             padding: 24px 28px;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
             cursor: pointer;
             text-decoration: none;
@@ -305,15 +407,45 @@
             transform: translateY(0);
         }
 
+        /* 工具卡片的液态光泽 */
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                ellipse at 30% 20%,
+                rgba(255, 255, 255, 0.06) 0%,
+                transparent 60%
+            );
+            pointer-events: none;
+            transition: transform 0.5s ease;
+        }
+
         .tool-card:hover {
             transform: translateY(-6px) scale(1.01);
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.18);
-            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4), 0 0 30px rgba(100, 160, 255, 0.05);
+            box-shadow: 
+                0 20px 48px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(100, 160, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .tool-card:hover::before {
+            transform: translate(5%, 3%);
         }
 
         .tool-card:active {
             transform: translateY(0px) scale(0.98);
+        }
+
+        /* 确保内容在光泽层之上 */
+        .tool-card > * {
+            position: relative;
+            z-index: 1;
         }
 
         .tool-card .tool-title {
@@ -371,6 +503,9 @@
             .card {
                 padding: 28px 18px 30px;
                 border-radius: 36px;
+            }
+            .card::after {
+                border-radius: 0 0 36px 36px;
             }
             .repo-title h1 {
                 font-size: 1.6rem;
@@ -452,38 +587,37 @@
         //  1. 工具数据（在这里添加你的工具）
         // ============================================================
         const TOOLS = [
-    {
-        id: 'kyos',
-        title: 'KylinOS.iso',
-        desc: '银河麒麟系统镜像下载，适用于自主可控的桌面与服务器环境。',
-        link: 'https://microsoft-dos.github.io/kyos'
-    },
-    {
-        id: 'wi10',
-        title: 'Windows 10 22H2.iso',
-        desc: '微软官方 Windows 10 22H2 版本系统镜像，适用于纯净安装或系统修复。',
-        link: 'https://microsoft-dos.github.io/wi10'
-    },  // ← 加上这个逗号
-    {
-        id: 'zuby',
-        title: '资源编译器',
-        desc: '一款用于编译和打包资源文件的工具，适合开发者在项目中管理和优化资源。',
-        link: 'https://microsoft-dos.github.io/zuby'
-    }, 
-    {
-        id: 'dabaicai',
-        title: 'DaBaiCai.iso',
-        desc: '大白菜系统镜像，一款轻量级、易用的操作系统镜像文件。',
-        link: 'https://microsoft-dos.github.io/dabaicai'
-    },
-     {
-        id: 'dg',
-        title: 'DiskGenius',
-        desc: '一款专业的磁盘分区管理工具，支持分区调整、格式化、数据恢复等高级功能。',
-        link: 'https://microsoft-dos.github.io/dg'
-    }
-    // 以后继续添加更多工具...
-];
+            {
+                id: 'kyos',
+                title: 'KylinOS.iso',
+                desc: '银河麒麟系统镜像下载，适用于自主可控的桌面与服务器环境。',
+                link: 'https://microsoft-dos.github.io/kyos'
+            },
+            {
+                id: 'wi10',
+                title: 'Windows 10 22H2.iso',
+                desc: '微软官方 Windows 10 22H2 版本系统镜像，适用于纯净安装或系统修复。',
+                link: 'https://microsoft-dos.github.io/wi10'
+            },
+            {
+                id: 'zuby',
+                title: '资源编译器',
+                desc: '一款用于编译和打包资源文件的工具，适合开发者在项目中管理和优化资源。',
+                link: 'https://microsoft-dos.github.io/zuby'
+            },
+            {
+                id: 'dabaicai',
+                title: 'DaBaiCai.iso',
+                desc: '大白菜系统镜像，一款轻量级、易用的操作系统镜像文件。',
+                link: 'https://microsoft-dos.github.io/dabaicai'
+            },
+            {
+                id: 'dg',
+                title: '分区工具 (DG)',
+                desc: '一款专业的磁盘分区管理工具，支持分区调整、格式化、数据恢复等高级功能。',
+                link: 'https://microsoft-dos.github.io/dg'
+            }
+        ];
 
         // ============================================================
         //  2. DOM 引用
@@ -497,28 +631,26 @@
         // ============================================================
         //  3. 搜索逻辑
         // ============================================================
- function performSearch() {
-    const keyword = searchInput.value.trim().toLowerCase();
+        function performSearch() {
+            const keyword = searchInput.value.trim().toLowerCase();
 
-    // 如果输入为空，隐藏结果
-    if (keyword === '') {
-        resultsArea.classList.remove('active');
-        return;
-    }
+            if (keyword === '') {
+                resultsArea.classList.remove('active');
+                return;
+            }
 
-    // 如果输入 * ，列出所有工具
-    if (keyword === '*' || keyword === '＊') {
-        renderResults(TOOLS, '全部工具');
-        return;
-    }
+            if (keyword === '*' || keyword === '＊') {
+                renderResults(TOOLS, '全部工具');
+                return;
+            }
 
-    const matched = TOOLS.filter(tool =>
-        tool.title.toLowerCase().includes(keyword) ||
-        tool.desc.toLowerCase().includes(keyword)
-    );
+            const matched = TOOLS.filter(tool =>
+                tool.title.toLowerCase().includes(keyword) ||
+                tool.desc.toLowerCase().includes(keyword)
+            );
 
-    renderResults(matched, keyword);
-}
+            renderResults(matched, keyword);
+        }
 
         // ============================================================
         //  4. 渲染结果卡片
@@ -558,6 +690,7 @@
         //  5. 关键词高亮辅助
         // ============================================================
         function highlightText(text, keyword) {
+            if (keyword === '全部工具') return text;
             const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
             return text.replace(regex, (match) =>
                 `<span style="background:#facc15;color:#1a1f33;padding:0 4px;border-radius:3px;font-weight:600;">${match}</span>`
