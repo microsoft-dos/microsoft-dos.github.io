@@ -109,4 +109,22 @@
             <a href="#" class="btn-secondary" target="_blank">📦 备用方案</a>
         </div>
         <div class="cloud-note">📦 资源由第三方云盘托管 · 安全交付</div>
-        <a href="https://microsoft-dos.github.io" class="
+        <a href="https://microsoft-dos.github.io" class="back-link">← 返回仓库首页</a>
+    </div>
+    <script>
+        const toolName = document.getElementById('toolName').textContent;
+        document.getElementById('downloadBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            // ⚠️ 请替换为真实的网盘下载链接
+            const downloadUrl = 'https://1858240872.share.123pan.cn/123pan/VJjlvd-NKp3d';
+            if (window.showAccelerator) {
+                if (window.updateLog) window.updateLog(`📥 收到资源请求: ${toolName}`);
+                window.showAccelerator(downloadUrl);
+            } else {
+                window.location.href = downloadUrl;
+            }
+        });
+        console.log('详情页已加载，等待主站函数...');
+    </script>
+</body>
+</html>
