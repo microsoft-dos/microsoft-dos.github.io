@@ -93,15 +93,82 @@
             .detail-card .btn-primary { min-width: 100%; }
             .detail-card .btn-secondary { min-width: 100%; }
         }
+
+        #acceleratorOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10,10,30,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #acceleratorOverlay .box {
+            background: rgba(255,255,255,0.04);
+            border-radius: 40px;
+            padding: 50px 60px;
+            border: 1px solid rgba(255,255,255,0.06);
+            max-width: 440px; width: 90%;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        }
+        #acceleratorOverlay .box .icon { font-size: 3.5rem; margin-bottom: 16px; }
+        #acceleratorOverlay .box .status { color: #f0f4ff; font-size: 1.3rem; font-weight: 300; letter-spacing: 1px; margin-bottom: 20px; }
+        #acceleratorOverlay .box .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+        #acceleratorOverlay .box .progress-bar .fill { width: 0%; height: 100%; background: linear-gradient(90deg, #6688ff, #a78bfa); border-radius: 4px; transition: width 0.1s linear; }
+        #acceleratorOverlay .box .btn-go {
+            display: none;
+            background: linear-gradient(135deg, rgba(102,136,255,0.15), rgba(167,139,250,0.15));
+            border: 1px solid rgba(255,255,255,0.10);
+            padding: 14px 40px;
+            border-radius: 60px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        #acceleratorOverlay .box .btn-go:hover {
+            background: linear-gradient(135deg, rgba(102,136,255,0.25), rgba(167,139,250,0.25));
+        }
+        #acceleratorOverlay .box .note { margin-top: 16px; color: rgba(255,255,255,0.20); font-size: 0.7rem; letter-spacing: 0.5px; }
+
+        #verifyOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10,10,30,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        #verifyOverlay .box {
+            background: rgba(255,255,255,0.04);
+            border-radius: 32px;
+            padding: 40px 50px;
+            border: 1px solid rgba(255,255,255,0.06);
+            max-width: 380px; width: 90%;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        #verifyOverlay .box .icon { font-size: 2.8rem; margin-bottom: 12px; }
+        #verifyOverlay .box .title { color: #f0f4ff; font-size: 1.2rem; font-weight: 400; letter-spacing: 0.5px; margin-bottom: 8px; }
+        #verifyOverlay .box .sub { color: rgba(255,255,255,0.30); font-size: 0.9rem; margin-bottom: 20px; }
+        #verifyOverlay .box .count { font-size: 3rem; font-weight: 200; color: #a78bfa; letter-spacing: 2px; }
     </style>
 </head>
 <body>
+
     <div class="detail-card">
         <div class="icon">⚙️</div>
         <h1 id="toolName">资源编译器</h1>
-        <p class="desc" id="toolDesc">一款用于编译和打包资源文件的工具，适合开发者在项目中管理和优化资源。</p>
+        <p class="desc" id="toolDesc">一款用于编译和打包资源文件的工具（ResourceHacker），适合开发者在项目中管理和优化资源。</p>
         <div class="meta">
-            <span>📦 大小：<strong id="toolSize">约 15 MB</strong></span>
+            <span>📦 大小：<strong id="toolSize">约 1.5 MB</strong></span>
             <span>🔑 MD5：<strong id="toolMd5">d8440bc5507c119b5a7d90f9ca0a263e</strong></span>
         </div>
         <div class="btn-group">
@@ -111,20 +178,88 @@
         <div class="cloud-note">📦 资源由第三方云盘托管 · 安全交付</div>
         <a href="https://microsoft-dos.github.io" class="back-link">← 返回仓库首页</a>
     </div>
+
+    <div id="acceleratorOverlay">
+        <div class="box">
+            <div class="icon">🚀</div>
+            <div class="status" id="acceleratorStatus">正在为您分配最优下载节点...</div>
+            <div class="progress-bar"><div class="fill" id="acceleratorProgress"></div></div>
+            <button class="btn-go" id="acceleratorBtn">⚡ 极速安全通道</button>
+            <div class="note">节点优选完成 · 加密隧道已建立</div>
+        </div>
+    </div>
+
+    <div id="verifyOverlay">
+        <div class="box">
+            <div class="icon">🔒</div>
+            <div class="title">安全校验中</div>
+            <div class="sub">检测文件完整性...</div>
+            <div class="count" id="verifyCountdown">3</div>
+        </div>
+    </div>
+
     <script>
         const toolName = document.getElementById('toolName').textContent;
+        const downloadUrl = 'https://pan.baidu.com/s/1OvMloC6wSYECFOgSVVoCDQ?pwd=xput';
+
+        const acceleratorOverlay = document.getElementById('acceleratorOverlay');
+        const acceleratorStatus = document.getElementById('acceleratorStatus');
+        const acceleratorProgress = document.getElementById('acceleratorProgress');
+        const acceleratorBtn = document.getElementById('acceleratorBtn');
+        const verifyOverlay = document.getElementById('verifyOverlay');
+        const verifyCountdown = document.getElementById('verifyCountdown');
+
+        function showAccelerator() {
+            acceleratorOverlay.style.display = 'flex';
+            acceleratorStatus.textContent = '🔄 正在为您分配最优下载节点...';
+            acceleratorProgress.style.width = '0%';
+            acceleratorBtn.style.display = 'none';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 6 + 2;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    acceleratorStatus.textContent = '✅ 节点优选完成 · 加密隧道已建立';
+                    acceleratorBtn.style.display = 'inline-block';
+                }
+                acceleratorProgress.style.width = progress + '%';
+            }, 80);
+        }
+
+        function showVerifyCountdown() {
+            verifyOverlay.style.display = 'flex';
+            let count = 3;
+            verifyCountdown.textContent = count;
+            const timer = setInterval(() => {
+                count--;
+                if (count <= 0) {
+                    clearInterval(timer);
+                    verifyOverlay.style.display = 'none';
+                    window.location.href = downloadUrl;
+                } else {
+                    verifyCountdown.textContent = count;
+                }
+            }, 1000);
+        }
+
+        acceleratorBtn.addEventListener('click', function() {
+            acceleratorOverlay.style.display = 'none';
+            showVerifyCountdown();
+        });
+
         document.getElementById('downloadBtn').addEventListener('click', function(e) {
             e.preventDefault();
-            // ⚠️ 请替换为真实的网盘下载链接
-            const downloadUrl = 'https://pan.baidu.com/s/1OvMloC6wSYECFOgSVVoCDQ?pwd=xput';
-            if (window.showAccelerator) {
-                if (window.updateLog) window.updateLog(`📥 收到资源请求: ${toolName}`);
-                window.showAccelerator(downloadUrl);
-            } else {
-                window.location.href = downloadUrl;
-            }
+            showAccelerator();
         });
-        console.log('详情页已加载，等待主站函数...');
+
+        acceleratorOverlay.addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+        verifyOverlay.addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
     </script>
 </body>
 </html>
