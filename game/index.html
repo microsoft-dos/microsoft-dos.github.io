@@ -25,7 +25,7 @@
             overflow: hidden;
         }
 
-        /* ===== 动态流动背景球体（赛博风格） ===== */
+        /* ===== 动态流动背景球体 ===== */
         .bg-orb {
             position: fixed;
             width: 600px;
@@ -174,6 +174,21 @@
             font-family: 'Courier New', monospace;
         }
 
+        /* ===== 返回首页 ===== */
+        .back-link {
+            display: inline-block;
+            margin-top: 16px;
+            color: rgba(255, 255, 255, 0.10);
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: color 0.2s;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+        .back-link:hover {
+            color: rgba(0, 242, 255, 0.30);
+        }
+
         /* ===== 响应式 ===== */
         @media (max-width: 500px) {
             .game-wrapper {
@@ -192,21 +207,6 @@
                 font-size: 0.85rem;
                 letter-spacing: 1px;
             }
-        }
-
-        /* ===== 返回首页按钮 ===== */
-        .back-link {
-            display: inline-block;
-            margin-top: 16px;
-            color: rgba(255, 255, 255, 0.10);
-            text-decoration: none;
-            font-size: 0.7rem;
-            transition: color 0.2s;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-        }
-        .back-link:hover {
-            color: rgba(0, 242, 255, 0.30);
         }
     </style>
 </head>
@@ -228,7 +228,8 @@
         <canvas id="gameCanvas" width="400" height="600"></canvas>
 
         <div class="controls">
-            <button id="restartBtn">🔄 重新开始</button>
+            <button id="startBtn">▶ 开始游戏</button>
+            <button id="restartBtn" style="display:none;">🔄 重新开始</button>
         </div>
 
         <div class="hint">
@@ -240,13 +241,15 @@
 
     <script>
         // ============================================================
-        //  打飞机 —— 完整游戏逻辑（不变）
+        //  打飞机 —— 改进版（开始按钮 + 敌机速度减慢）
         // ============================================================
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('scoreDisplay');
         const livesEl = document.getElementById('livesDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
 
         const CW = 400,
             CH = 600;
@@ -266,8 +269,61 @@
         let enemySpawnCounter = 0;
         const ENEMY_SPAWN_DELAY = 35;
         let frameCount = 0;
+        let gameStarted = false;
 
+        // ============================================================
+        //  敌机速度 — 已减慢
+        // ============================================================
+        function spawnEnemy() {
+            const type = Math.random() < 0.7 ? 'normal' : 'fast';
+            const w = type === 'normal' ? 28 : 20;
+            const h = type === 'normal' ? 28 : 20;
+            // 速度减慢：普通 1.2~1.8（原 1.8~2.6），快速 2.0~2.6（原 3.2~3.8）
+            const speed = type === 'normal' ? 1.2 + Math.random() * 0.6 : 2.0 + Math.random() * 0.6;
+            enemies.push({
+                x: Math.random() * (CW - w),
+                y: -h,
+                w: w,
+                h: h,
+                speed: speed,
+                type: type,
+                hp: 1,
+            });
+        }
+
+        // ============================================================
+        //  初始化（不自动开始）
+        // ============================================================
         function initGame() {
+            player.x = 200;
+            player.y = 520;
+            bullets = [];
+            enemies = [];
+            particles = [];
+            score = 0;
+            lives = 3;
+            gameOver = false;
+            gameWin = false;
+            shootCooldown = 0;
+            enemySpawnCounter = 0;
+            frameCount = 0;
+            gameStarted = false;
+            updateUI();
+            if (frameId) cancelAnimationFrame(frameId);
+            drawStartScreen();
+            startBtn.style.display = 'inline-block';
+            restartBtn.style.display = 'none';
+        }
+
+        // ============================================================
+        //  开始游戏
+        // ============================================================
+        function startGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            startBtn.style.display = 'none';
+            restartBtn.style.display = 'inline-block';
+            // 重置状态
             player.x = 200;
             player.y = 520;
             bullets = [];
@@ -285,27 +341,42 @@
             gameLoop();
         }
 
+        // ============================================================
+        //  绘制开始画面
+        // ============================================================
+        function drawStartScreen() {
+            ctx.clearRect(0, 0, CW, CH);
+            // 背景星星
+            ctx.fillStyle = 'rgba(255,255,255,0.12)';
+            for (let i = 0; i < 50; i++) {
+                const sx = (i * 131) % CW,
+                    sy = (i * 279) % CH;
+                ctx.beginPath();
+                ctx.arc(sx, sy, (i % 3) + 0.5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            // 提示文字
+            ctx.fillStyle = 'rgba(255,255,255,0.30)';
+            ctx.font = '24px "Courier New", monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🛩️ 准备就绪', CW / 2, CH / 2 - 20);
+            ctx.fillStyle = 'rgba(255,255,255,0.12)';
+            ctx.font = '14px "Courier New", monospace';
+            ctx.fillText('点击「开始游戏」起飞', CW / 2, CH / 2 + 40);
+        }
+
+        // ============================================================
+        //  UI 更新
+        // ============================================================
         function updateUI() {
             scoreEl.textContent = score;
             livesEl.textContent = lives;
         }
 
-        function spawnEnemy() {
-            const type = Math.random() < 0.7 ? 'normal' : 'fast';
-            const w = type === 'normal' ? 28 : 20;
-            const h = type === 'normal' ? 28 : 20;
-            const speed = type === 'normal' ? 1.8 + Math.random() * 0.8 : 3.2 + Math.random() * 0.6;
-            enemies.push({
-                x: Math.random() * (CW - w),
-                y: -h,
-                w: w,
-                h: h,
-                speed: speed,
-                type: type,
-                hp: 1,
-            });
-        }
-
+        // ============================================================
+        //  粒子特效
+        // ============================================================
         function emitParticles(x, y, color, count = 18) {
             for (let i = 0; i < count; i++) {
                 const angle = Math.random() * 2 * Math.PI;
@@ -323,8 +394,11 @@
             }
         }
 
+        // ============================================================
+        //  射击
+        // ============================================================
         function shootBullet() {
-            if (shootCooldown > 0) return;
+            if (shootCooldown > 0 || !gameStarted || gameOver) return;
             bullets.push({
                 x: player.x + player.w / 2 - 3,
                 y: player.y - 6,
@@ -336,13 +410,19 @@
             emitParticles(player.x + player.w / 2, player.y - 4, '#00f2ff', 4);
         }
 
+        // ============================================================
+        //  碰撞检测
+        // ============================================================
         function rectCollide(a, b) {
             return a.x < b.x + b.w && a.x + a.w > b.x &&
                 a.y < b.y + b.h && a.y + a.h > b.y;
         }
 
+        // ============================================================
+        //  游戏主循环
+        // ============================================================
         function gameLoop() {
-            if (gameOver) {
+            if (gameOver || !gameStarted) {
                 draw();
                 return;
             }
@@ -352,6 +432,9 @@
             frameId = requestAnimationFrame(gameLoop);
         }
 
+        // ============================================================
+        //  更新逻辑
+        // ============================================================
         function update() {
             const MOVE_SPEED = 4.5;
             if (keys.left && player.x > 0) player.x -= MOVE_SPEED;
@@ -360,6 +443,7 @@
             if (shootCooldown > 0) shootCooldown--;
             if (keys.space) shootBullet();
 
+            // 子弹移动
             for (let i = bullets.length - 1; i >= 0; i--) {
                 const b = bullets[i];
                 b.y -= b.speed;
@@ -369,6 +453,7 @@
                 }
             }
 
+            // 敌人移动 + 碰撞
             for (let i = enemies.length - 1; i >= 0; i--) {
                 const e = enemies[i];
                 e.y += e.speed;
@@ -419,6 +504,7 @@
                 }
             }
 
+            // 生成敌人
             enemySpawnCounter++;
             const spawnRate = Math.max(18, ENEMY_SPAWN_DELAY - Math.floor(score / 300));
             if (enemySpawnCounter >= spawnRate) {
@@ -428,6 +514,7 @@
                 if (score > 500 && Math.random() < 0.3) spawnEnemy();
             }
 
+            // 粒子更新
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
                 p.x += p.vx;
@@ -440,10 +527,14 @@
             }
         }
 
+        // ============================================================
+        //  绘图
+        // ============================================================
         function draw() {
             ctx.clearRect(0, 0, CW, CH);
 
-            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            // 背景星星
+            ctx.fillStyle = 'rgba(255,255,255,0.12)';
             for (let i = 0; i < 50; i++) {
                 const sx = (i * 131) % CW,
                     sy = (i * 279 + frameCount * 0.2) % CH;
@@ -452,6 +543,7 @@
                 ctx.fill();
             }
 
+            // 粒子
             for (const p of particles) {
                 ctx.globalAlpha = p.life * 0.9;
                 ctx.fillStyle = p.color;
@@ -461,6 +553,7 @@
             }
             ctx.globalAlpha = 1;
 
+            // 子弹
             ctx.fillStyle = '#00f2ff';
             ctx.shadowColor = '#00f2ff';
             ctx.shadowBlur = 14;
@@ -469,6 +562,7 @@
             }
             ctx.shadowBlur = 0;
 
+            // 敌人
             for (const e of enemies) {
                 const gradient = ctx.createRadialGradient(
                     e.x + 4, e.y + 4, 2,
@@ -505,6 +599,7 @@
             }
             ctx.shadowBlur = 0;
 
+            // 玩家
             const px = player.x,
                 py = player.y,
                 w = player.w,
@@ -540,6 +635,7 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
+            // 游戏结束
             if (gameOver) {
                 ctx.fillStyle = 'rgba(0,0,0,0.65)';
                 ctx.fillRect(0, 0, CW, CH);
@@ -555,8 +651,16 @@
                 ctx.fillStyle = 'rgba(255,255,255,0.25)';
                 ctx.fillText('点击「重新开始」再来一局', CW / 2, CH / 2 + 86);
             }
+
+            // 如果游戏未开始，显示准备画面
+            if (!gameStarted && !gameOver) {
+                drawStartScreen();
+            }
         }
 
+        // ============================================================
+        //  键盘事件
+        // ============================================================
         function handleKeyDown(e) {
             const key = e.key;
             if (key === 'ArrowLeft' || key === 'Left') { keys.left = true;
@@ -568,6 +672,11 @@
             if (['ArrowUp', 'ArrowDown', ' ', 'Space', 'ArrowLeft', 'ArrowRight'].includes(key) ||
                 key.startsWith('Arrow')) {
                 e.preventDefault();
+            }
+            // 按空格键快速开始
+            if ((key === ' ' || key === 'Space') && !gameStarted && !gameOver) {
+                e.preventDefault();
+                startGame();
             }
         }
 
@@ -585,10 +694,17 @@
             }
         }
 
+        // ============================================================
+        //  触控支持
+        // ============================================================
         let touchX = null;
 
         function handleTouchStart(e) {
             e.preventDefault();
+            if (!gameStarted && !gameOver) {
+                startGame();
+                return;
+            }
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const touch = e.touches[0];
@@ -622,14 +738,29 @@
             touchX = null;
         }
 
-        document.getElementById('restartBtn').addEventListener('click', initGame);
+        // ============================================================
+        //  按钮事件
+        // ============================================================
+        startBtn.addEventListener('click', startGame);
 
+        restartBtn.addEventListener('click', function() {
+            initGame();
+            // 直接开始，不用再点开始
+            setTimeout(startGame, 100);
+        });
+
+        // ============================================================
+        //  窗口事件
+        // ============================================================
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         canvas.addEventListener('touchstart', handleTouchStart);
         canvas.addEventListener('touchmove', handleTouchMove);
         canvas.addEventListener('touchend', handleTouchEnd);
 
+        // ============================================================
+        //  启动
+        // ============================================================
         initGame();
     </script>
 
