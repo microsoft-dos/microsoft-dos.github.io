@@ -6,14 +6,7 @@
     <title>Microsoft-DOS 的博客</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>" />
     <style>
-        /* ===== 全局重置 ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
         body {
             min-height: 100vh;
             display: flex;
@@ -24,8 +17,6 @@
             position: relative;
             overflow-x: hidden;
         }
-
-        /* ===== 动态流动背景球体 ===== */
         .bg-orb {
             position: fixed;
             width: 600px;
@@ -51,16 +42,12 @@
             0% { transform: translate(-100px, -80px) scale(1); }
             100% { transform: translate(120px, 100px) scale(1.3); }
         }
-
-        /* ===== 主容器 ===== */
         .main-wrapper {
             position: relative;
             z-index: 1;
             max-width: 860px;
             width: 100%;
         }
-
-        /* ===== 赛博风格标题 ===== */
         .cyber-header {
             display: flex;
             justify-content: space-between;
@@ -81,13 +68,7 @@
             border-radius: 40px;
             border: 1px solid rgba(0, 242, 255, 0.08);
         }
-        .cyber-header h1 span {
-            color: #fff;
-            opacity: 0.3;
-            font-weight: 300;
-        }
-
-        /* ===== 主卡片 ===== */
+        .cyber-header h1 span { color: #fff; opacity: 0.3; font-weight: 300; }
         .card {
             position: relative;
             overflow: hidden;
@@ -102,7 +83,6 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             margin-bottom: 30px;
         }
-
         .card::before {
             content: '';
             position: absolute;
@@ -115,7 +95,6 @@
             border-radius: 50%;
             transition: transform 0.5s ease;
         }
-
         .card::after {
             content: '';
             position: absolute;
@@ -127,7 +106,6 @@
             pointer-events: none;
             border-radius: 0 0 48px 48px;
         }
-
         .card .glass-edge {
             position: absolute;
             top: 0;
@@ -139,24 +117,17 @@
             background: linear-gradient(135deg, rgba(0, 242, 255, 0.04) 0%, transparent 30%, transparent 70%, rgba(0, 242, 255, 0.02) 100%);
             z-index: 0;
         }
-
         .card:hover {
             transform: translateY(-4px);
             box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(0, 242, 255, 0.08);
         }
+        .card>*:not(.glass-edge) { position: relative; z-index: 1; }
 
-        .card>*:not(.glass-edge) {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ===== 搜索框 ===== */
         .search-section {
             margin-bottom: 24px;
             display: flex;
             justify-content: center;
         }
-
         .search-box {
             display: flex;
             align-items: center;
@@ -170,14 +141,12 @@
             max-width: 540px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
-
         .search-box:focus-within {
             transform: translateY(-2px);
             border-color: rgba(0, 242, 255, 0.30);
             box-shadow: 0 12px 32px rgba(0, 242, 255, 0.06);
             background: rgba(255, 255, 255, 0.05);
         }
-
         .search-box input {
             flex: 1;
             background: transparent;
@@ -189,13 +158,11 @@
             letter-spacing: 0.5px;
             font-family: 'Courier New', monospace;
         }
-
         .search-box input::placeholder {
             color: rgba(255, 255, 255, 0.20);
             font-weight: 300;
             letter-spacing: 1px;
         }
-
         .search-box button {
             background: rgba(0, 242, 255, 0.06);
             border: none;
@@ -212,14 +179,11 @@
             font-family: 'Courier New', monospace;
             letter-spacing: 1px;
         }
-
         .search-box button:hover {
             background: rgba(0, 242, 255, 0.12);
             color: #ffffff;
             box-shadow: 0 0 30px rgba(0, 242, 255, 0.08);
         }
-
-        /* ===== 结果计数 ===== */
         .results-count {
             color: rgba(255, 255, 255, 0.20);
             font-size: 0.8rem;
@@ -228,17 +192,13 @@
             letter-spacing: 1px;
             font-family: 'Courier New', monospace;
         }
-        .results-count strong {
-            color: #00f2ff;
-        }
+        .results-count strong { color: #00f2ff; }
 
-        /* ===== 博客卡片网格 ===== */
         #blogList {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
         }
-
         .blog-card {
             position: relative;
             overflow: hidden;
@@ -255,7 +215,6 @@
             display: block;
             transform: translateY(0);
         }
-
         .blog-card::before {
             content: '';
             position: absolute;
@@ -268,23 +227,14 @@
             border-radius: 50%;
             transition: transform 0.5s ease;
         }
-
         .blog-card:hover {
             transform: translateY(-6px) scale(1.01);
             background: rgba(255, 255, 255, 0.04);
             border-color: rgba(0, 242, 255, 0.15);
             box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2), 0 0 30px rgba(0, 242, 255, 0.03);
         }
-
-        .blog-card:hover::before {
-            transform: translate(5%, 3%);
-        }
-
-        .blog-card>* {
-            position: relative;
-            z-index: 1;
-        }
-
+        .blog-card:hover::before { transform: translate(5%, 3%); }
+        .blog-card>* { position: relative; z-index: 1; }
         .blog-card .blog-title {
             color: #f0f4ff;
             font-size: 1.1rem;
@@ -293,7 +243,6 @@
             margin-bottom: 6px;
             font-family: 'Courier New', monospace;
         }
-
         .blog-card .blog-desc {
             color: rgba(255, 255, 255, 0.35);
             font-size: 0.9rem;
@@ -301,7 +250,6 @@
             line-height: 1.5;
             margin-bottom: 8px;
         }
-
         .blog-card .blog-meta {
             color: rgba(0, 242, 255, 0.30);
             font-size: 0.7rem;
@@ -311,14 +259,12 @@
             align-items: center;
             gap: 12px;
         }
-
         .blog-card .blog-meta .tag {
             background: rgba(0, 242, 255, 0.06);
             padding: 2px 10px;
             border-radius: 12px;
             border: 1px solid rgba(0, 242, 255, 0.06);
         }
-
         .no-result {
             color: rgba(255, 255, 255, 0.15);
             text-align: center;
@@ -328,8 +274,6 @@
             font-family: 'Courier New', monospace;
             grid-column: 1 / -1;
         }
-
-        /* ===== 返回首页 ===== */
         .back-link {
             display: inline-block;
             margin-top: 24px;
@@ -340,126 +284,48 @@
             font-family: 'Courier New', monospace;
             letter-spacing: 0.5px;
         }
-        .back-link:hover {
-            color: rgba(0, 242, 255, 0.30);
-        }
-
-        /* ===== 响应式 ===== */
+        .back-link:hover { color: rgba(0, 242, 255, 0.30); }
         @media (max-width: 600px) {
-            body {
-                padding: 20px 12px;
-            }
-            .card {
-                padding: 24px 16px 28px;
-                border-radius: 32px;
-            }
-            .card .glass-edge {
-                border-radius: 32px;
-            }
-            .card::after {
-                border-radius: 0 0 32px 32px;
-            }
-            .cyber-header h1 {
-                font-size: 1.2rem;
-                letter-spacing: 2px;
-                padding: 6px 14px;
-            }
-            .search-box {
-                flex-wrap: wrap;
-                padding: 8px;
-                border-radius: 40px;
-            }
-            .search-box input {
-                width: 100%;
-                padding: 12px 16px;
-                font-size: 0.9rem;
-                text-align: center;
-            }
-            .search-box button {
-                width: 100%;
-                border-left: none;
-                border-top: 1px solid rgba(0, 242, 255, 0.06);
-                padding: 12px;
-                border-radius: 40px;
-                justify-content: center;
-            }
-            #blogList {
-                grid-template-columns: 1fr;
-            }
+            body { padding: 20px 12px; }
+            .card { padding: 24px 16px 28px; border-radius: 32px; }
+            .card .glass-edge { border-radius: 32px; }
+            .card::after { border-radius: 0 0 32px 32px; }
+            .cyber-header h1 { font-size: 1.2rem; letter-spacing: 2px; padding: 6px 14px; }
+            .search-box { flex-wrap: wrap; padding: 8px; border-radius: 40px; }
+            .search-box input { width: 100%; padding: 12px 16px; font-size: 0.9rem; text-align: center; }
+            .search-box button { width: 100%; border-left: none; border-top: 1px solid rgba(0, 242, 255, 0.06); padding: 12px; border-radius: 40px; justify-content: center; }
+            #blogList { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-
-    <!-- ===== 动态背景球体 ===== -->
     <div class="bg-orb"></div>
     <div class="bg-orb"></div>
-
     <div class="main-wrapper">
-
-        <!-- ===== 标题 ===== -->
         <div class="cyber-header">
             <h1>📝 BLOG<span>_DOS</span></h1>
         </div>
-
-        <!-- ===== 主卡片 ===== -->
         <div class="card">
             <div class="glass-edge"></div>
-
-            <!-- 搜索框 -->
             <div class="search-section">
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="> 搜索文章..." aria-label="搜索博客">
                     <button id="searchBtn">SEARCH</button>
                 </div>
             </div>
-
-            <!-- 结果计数 -->
             <div class="results-count" id="resultsCount">📦 共 <strong id="totalCount">0</strong> 篇文章</div>
-
-            <!-- 博客卡片列表 -->
             <div id="blogList"></div>
-
             <a href="https://microsoft-dos.github.io" class="back-link">← 返回仓库首页</a>
         </div>
     </div>
-
     <script>
-        // ============================================================
-        //  博客数据（在这里添加你的文章）
-        // ============================================================
-        const BLOGS = [{
-            id: 'system32-swap',
-            title: 'System32 和 SysWOW64 对调会怎样？',
-            desc: '我试了。结果是循环自动修复，进不去系统。破案了，千万别试。',
-            tag: 'Windows',
-            link: 'https://microsoft-dos.github.io/buke/system32-swap'
-        }, {
-            id: 'github-pages-guide',
-            title: 'GitHub Pages 搭建极客资源站',
-            desc: '从零开始，把 GitHub Pages 变成你的个人资源库。赛博风格 + 液态玻璃效果，安排！',
-            tag: '教程',
-            link: 'https://microsoft-dos.github.io/buke/github-pages-guide'
-        },{
-            id: 'cyberpunk-style',
-            title: '赛博风格 + 液态玻璃 = 高级感拉满',
-            desc: '分享我网站的设计思路：动态光晕背景、霓虹边框、毛玻璃效果。主打一个“看着就很贵”。',
-            tag: '设计',
-            link: 'https://microsoft-dos.github.io/buke/cyberpunk-style'
-        }];
-
-        // ============================================================
-        //  DOM 引用
-        // ============================================================
+        const BLOGS = [];
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const blogList = document.getElementById('blogList');
         const totalCount = document.getElementById('totalCount');
         const resultsCount = document.getElementById('resultsCount');
 
-        // ============================================================
-        //  工具函数：打乱数组（用于随机展示）
-        // ============================================================
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -468,49 +334,6 @@
             return arr;
         }
 
-        // ============================================================
-        //  渲染博客卡片
-        // ============================================================
-        function renderBlogs(blogs, keyword = '') {
-            blogList.innerHTML = '';
-
-            if (blogs.length === 0) {
-                blogList.innerHTML = `<div class="no-result">⛔ 未找到匹配的文章</div>`;
-                resultsCount.innerHTML = `🔍 未找到与 "<strong>${keyword}</strong>" 相关的文章`;
-                return;
-            }
-
-            // 显示数量
-            totalCount.textContent = blogs.length;
-            if (keyword && keyword !== '') {
-                resultsCount.innerHTML = `🔍 找到 <strong>${blogs.length}</strong> 篇匹配的文章`;
-            } else {
-                resultsCount.innerHTML = `📦 共 <strong>${blogs.length}</strong> 篇文章 · 随机展示中`;
-            }
-
-            blogs.forEach(blog => {
-                const titleHighlight = highlightText(blog.title, keyword);
-                const descHighlight = highlightText(blog.desc, keyword);
-
-                const card = document.createElement('a');
-                card.className = 'blog-card';
-                card.href = blog.link;
-                card.target = '_blank';
-                card.innerHTML = `
-                        <div class="blog-title">${titleHighlight}</div>
-                        <div class="blog-desc">${descHighlight}</div>
-                        <div class="blog-meta">
-                            <span class="tag">#${blog.tag}</span>
-                            <span>${blog.link}</span>
-                        </div>
-                    `;
-                blogList.appendChild(card);
-            });
-        }
-
-        // ============================================================
-        //  高亮辅助
-        // ============================================================
         function highlightText(text, keyword) {
             if (!keyword || keyword === '') return text;
             const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -519,56 +342,68 @@
             );
         }
 
-        // ============================================================
-        //  搜索逻辑
-        // ============================================================
+        function renderBlogs(blogs, keyword = '') {
+            blogList.innerHTML = '';
+            if (blogs.length === 0) {
+                blogList.innerHTML = `<div class="no-result">📝 暂无文章 · 等博主慢慢写</div>`;
+                resultsCount.innerHTML = `📦 共 <strong>0</strong> 篇文章`;
+                return;
+            }
+            totalCount.textContent = blogs.length;
+            if (keyword && keyword !== '') {
+                resultsCount.innerHTML = `🔍 找到 <strong>${blogs.length}</strong> 篇匹配的文章`;
+            } else {
+                resultsCount.innerHTML = `📦 共 <strong>${blogs.length}</strong> 篇文章 · 随机展示中`;
+            }
+            blogs.forEach(blog => {
+                const titleHighlight = highlightText(blog.title, keyword);
+                const descHighlight = highlightText(blog.desc, keyword);
+                const card = document.createElement('a');
+                card.className = 'blog-card';
+                card.href = blog.link;
+                card.target = '_blank';
+                card.innerHTML = `
+                    <div class="blog-title">${titleHighlight}</div>
+                    <div class="blog-desc">${descHighlight}</div>
+                    <div class="blog-meta">
+                        <span class="tag">#${blog.tag}</span>
+                        <span>${blog.link}</span>
+                    </div>
+                `;
+                blogList.appendChild(card);
+            });
+        }
+
         function performSearch() {
             const keyword = searchInput.value.trim().toLowerCase();
-
             if (keyword === '') {
-                // 空搜索：随机展示6篇
                 const shuffled = shuffleArray([...BLOGS]);
                 renderBlogs(shuffled.slice(0, 6), '');
                 return;
             }
-
             const matched = BLOGS.filter(blog =>
                 blog.title.toLowerCase().includes(keyword) ||
                 blog.desc.toLowerCase().includes(keyword) ||
                 blog.tag.toLowerCase().includes(keyword)
             );
-
             renderBlogs(matched, keyword);
         }
 
-        // ============================================================
-        //  事件绑定
-        // ============================================================
         searchBtn.addEventListener('click', performSearch);
-
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 performSearch();
             }
         });
-
-        // ============================================================
-        //  快捷键：/ 聚焦搜索
-        // ============================================================
         document.addEventListener('keydown', (e) => {
             if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
                 e.preventDefault();
                 searchInput.focus();
             }
         });
-
-        // ============================================================
-        //  初始化：随机展示6篇
-        // ============================================================
         const shuffled = shuffleArray([...BLOGS]);
         renderBlogs(shuffled.slice(0, 6), '');
     </script>
-
 </body>
 </html>
